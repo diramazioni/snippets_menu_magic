@@ -1,6 +1,8 @@
 notes.ipynb
 README.ipynb
 
+.directory
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
