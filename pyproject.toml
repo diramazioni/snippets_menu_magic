@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "snippets_menu_magic"
+author = "Eli Spizzichino"
+author-email = "scrivi@gmail.com"
+home-page = "https://github.com/diramazioni/snippets_menu_magic"
+requires = [ 
+    "jupyter_contrib_nbextensions >= 0.5.0", 
+    "dpath >=1.4.2" 
+    ]
+description-file="README.md"
+keywords = "ipython jupyter snippet menu magic"
+classifiers=[
+    "Intended Audience :: Developers",
+    "Framework :: IPython",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    ]
