@@ -3,7 +3,7 @@
     Let's you create menu directly from the notebook. 
     The menu elements can be snippets of code or internal/external links
 """
-__version__ = '0.1.0'
+__version__ = '0.2'
 
 from .snippets import SnippetsMenuMagic
 

@@ -1,3 +1,5 @@
+#%load snippets_menu_magic/snippets.py
+
 from IPython.core.magic import  (
     Magics, magics_class, cell_magic, line_magic
 )
@@ -19,13 +21,15 @@ class SnippetsMenuMagic(Magics):
     def __init__(self, shell=None,  **kwargs):
         super().__init__(shell=shell, **kwargs)
         self._menu = {}
-        self._dump_path = os.path.join(os.path.expanduser("~"), '.jupyter', 'custom')
+        shell.user_ns['__menu'] = self._menu
         self.default_menu = []
-        #shell.user_ns['__menu'] = self._menu
-        self.reserved = ('snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction')
-    
-    def dict2list(self, src_dict):    
         
+        self.reserved = ('snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction')
+        self._dump_path = os.path.join(os.path.expanduser("~"), '.jupyter', 'custom')
+        if '__file__' in globals(): self._module_path = os.path.abspath(os.path.dirname(__file__))
+        else: self._module_path = os.path.join( os.path.abspath(os.getcwd()), 'snippets_menu_magic') #interactive load
+                                               
+    def dict2list(self, src_dict):    
         dest = []
         for menu, d in src_dict.items():
     #         print("%s -> %s"% (menu,d))
@@ -41,60 +45,8 @@ class SnippetsMenuMagic(Magics):
             dmenu['name'] = menu
             dest.append(dmenu)
         return dest
-                
-    @line_magic
-    def snip_load_test(self, line):
-        self._load_json(fname='test3.json', append=False)
-        
-    @line_magic
-    @magic_arguments()
-    @argument('file', help='file.json to load the menu from', default='menu.json',  nargs='?')
-    @argument('-a', help='append to the current menu without changing existing values', default=False, action='store_true')    
-    def snip_load(self, line):
-        ''' Load the menu from json '''
-        args = parse_argstring(self.snip_load, line)
-        #print("fname=%s, append=%s" % (args.file, args.a))
-        self._load_json(fname=args.file, append=args.a)
-        
-    @line_magic
-    def snip_clear(self, line):
-        """ remove all """
-        self._menu = {}
-    @line_magic
-    def snip_show(self, line):
-        """ show all """
-        print(json.dumps(self._menu, indent=4))
-        
-    @line_magic
-    def snip_show_custom(self):
-        """show custom.js """
-        fpath = os.path.join(self._dump_path, 'custom.js')
-        with open(fpath) as file: 
-            data = file.read() 
-            print(data)
-            
-    @line_magic
-    def snip_slice_default(self, line):
-        start, times = line.split()
-        splice = "snippets_menu.default_menus[0]['sub-menu'].splice(%s, %s);" % (start, times)
-        self.default_menu.append(splice)
-        self._dump()
-        
-    @line_magic
-    @magic_arguments()
-    @argument('-top', help='append to the current menu without changing existing values', default=False, action='store_true')        
-    @argument('file', help='file.json to dump the menu to', default='menu.json',  nargs='*')
-    def snip_dump(self, line):
-        ''' Dump the menu to custom.js '''
-        args = parse_argstring(self.snip_dump, line)        
-        self._dump(topmenu=args.top)
-        if args.file:
-            fname = args.file if isinstance(args.file, str) else args.file[0]
-            if not len(fname): fname = 'menu.json'
-            self._dump_json(fname = fname)
-        else: self._dump_json()
 
-    def _dump(self, topmenu=False):
+    def _dump(self, path=None, topmenu=False):
         pre = '''
 requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
     console.log('Loading `snippets_menu` customizations from `custom.js`');
@@ -103,51 +55,94 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
     var horizontal_line = '---';
     snippets_menu.options['menus'][0]['sub-menu'].push(horizontal_line);
 '''
+        ### To-do: add the option to remove the default menu completely
         post = '''
 });
 '''       
         fpath = os.path.join(self._dump_path, 'custom.js')
+        if path:   dump = dpath.util.get(self._menu, path)
+        else: dump = self._menu
+#         if isinstance(dump, dict): dump = [dump] 
 #         print("Writing ", fpath)
         with open(fpath, 'w') as file: 
             file.write(pre)
-            for m in self.dict2list(self._menu):
-                if not topmenu:
+            for m in self.dict2list(dump):
+                if not topmenu: # insert as a top menu
                     file.write("    snippets_menu.options['menus'][0]['sub-menu'].push(%s);\n" % m)
-                else:
+                else: # insert as a normal submenu of Snippets
                     file.write("    snippets_menu.options['menus'].push(%s);\n" % m)
             file.write(post)
         
         #self.snip_show_custom()
-    def _dump_json(self, fname='menu.json', debug=False):
+    def _dump_json(self, path=None, fname='menu.json', debug=False):
         print("writting ", fname)
         fpath = os.path.join(self._dump_path, fname)
+        if path:   dump = dpath.util.get(self._menu, path)
+        else: dump = self._menu
+        #if isinstance(dump, dict): dump = [dump] 
         with open(fpath, 'w') as file: 
-            if debug:
-                json.dump(self.dict2list(self._menu), file, indent=4)
+            if not debug:
+                json.dump(dump, file, indent=4)
             else :
-                json.dump(self._menu, file, indent=4)
-    def _load_json(self, fname='menu.json', append=False):
-        fpath = os.path.join(self._dump_path, fname)
-        with open(fpath) as file:
+                json.dump(self.dict2list(dump), file, indent=4)
+                
+    def _load_json(self, path=None, fname='menu.json', append=False):
+        with open(fname) as file:
             if append:
                 dpath.util.merge(self._menu, json.load(file), flags=dpath.util.MERGE_REPLACE)
                 #self._menu.update(json.load(file))
+            elif path:
+                dpath.util.new(self._menu, path, json.load(file))
             else:
                 self._menu = json.load(file)
 
+    @line_magic
+    @magic_arguments()
+    @argument('file', help='file.json to load the menu from', default='menu.json',  nargs='?')
+    @argument('path', help='path glob of the destination menu', nargs='?' )
+    @argument('-a', help='append to the current menu without changing existing values', 
+              default=False, action='store_true')    
+    def snip_load(self, line):
+        ''' Load the menu from json '''
+        args = parse_argstring(self.snip_load, line)
+        if args.file:
+            for p in [ os.path.join(self._dump_path, args.file), 
+                      os.path.join(self._module_path, args.file) ]:
+                if os.path.exists(p):
+                    self._load_json(path=args.path, fname=p, append=args.a)
+                    return 
+            return "Path not found %s" % args.file
+        #print("fname=%s, append=%s" % (args.file, args.a))
+        self._load_json(path=args.path, fname=os.path.join(self._module_path, 'menu.json'), append=args.a)
+        
+    @line_magic
+    @magic_arguments()    
+    @argument('file', help='file.json to dump the menu to', default='menu.json',  nargs='*')
+    @argument('path', help='path glob of the source menu', nargs='?' )
+    @argument('-t','--top', help='place the menu on top instead of a submenu of Snippets', default=False, action='store_true')        
+    def snip_dump(self, line):
+        ''' Dump the menu to custom.js and to menu.json (if file is not provided) '''
+        args = parse_argstring(self.snip_dump, line)
+        self._dump(path=args.path, topmenu=args.top)
+        if args.file:
+            fname = args.file[0] if isinstance(args.file, list) else args.file
+            self._dump_json(path=args.path, fname=fname)
+        else: self._dump_json(path=args.path)
 
     @cell_magic
     @magic_arguments()
-    @argument('path', help='%%snip_add menu [sub menu] [sub sub menu] [etc]', nargs='+' )    
-    @argument('--internal-link', help='add an internal link instead of a snippet', default=False, action='store_true')
-    @argument('--external-link', help='add an external link instead of a snippet', default=False, action='store_true')
-    @argument('--menu-direction', help='define the direction of the menu') 
-    @argument('--sub-menu-direction', help='define the direction of the sub-menu')
+    @argument('path', help='path glob of the menu', nargs='+' )    
+    @argument('-ilink', '--internal-link', help='add an internal link instead of a snippet', default=False, action='store_true')
+    @argument('-link', '--external-link', help='add an external link instead of a snippet', default=False, action='store_true')
+    @argument('--menu-direction', help='define the direction of the menu CURRENTLY NOT WORKING', default=False, action='store_true') 
+    @argument('--sub-menu-direction', help='define the direction of the sub-menu CURRENTLY NOT WORKING', default=False, action='store_true')
     def snip_add(self, line, cell):
         """   
               inset a new menu in the tree 
-              menu is a path glob expression for the menu tree structure 
-              The node tree is created or replaced with this node the path can be a list of separate words like 
+              The path must be a unique path rappresenting the menu tree structure 
+              The path will replace eventually preexisting nodes 
+              and will create all the intermidiate node (like mkdir -p)
+              The path can be a list of separate words like 
               %snip_add  test_menu "sub menu" "dive deep" 
               or with a path like syntax 
               %snip_add  test_menu/sub_menu/"dive deep" 
@@ -156,9 +151,10 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         args = parse_argstring(self.snip_add, line)
         #print(args)
         menus = [dequote(menu) for menu in args.path]
+        if len(menus) == 1: menus = menus[0]
         for r in self.reserved: 
             if r in menus: 
-                raise Exception("Can't use %s because is reserved" % r )
+                raise Exception("Can't use %s because it is a reserved keyword" % r )
         content = cell.split('\n')
         if args.internal_link:
             new = {'internal-link': content[0]}
@@ -174,33 +170,61 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         
         self._dump()
         #self._dump_json()            
-    
+    @line_magic
+    def snip_load_test(self, line):
+        self._load_json(fname='test3.json', append=False)
+    @line_magic
+    def snip_clear(self, line):
+        """ remove all """
+        self._menu = {}
+    def _printJson(self, dict_):
+        print(json.dumps(dict_, indent=4))        
+    @line_magic
+    def snip_show(self, line):
+        """ show all """
+        self._printJson(self._menu)
+    @line_magic
+    def snip_show_custom(self):
+        """show custom.js """
+        fpath = os.path.join(self._dump_path, 'custom.js')
+        with open(fpath) as file: 
+            data = file.read() 
+            print(data)            
+    @line_magic
+    def snip_slice_default(self, line):
+        start, times = line.split()
+        splice = "snippets_menu.default_menus[0]['sub-menu'].splice(%s, %s);" % (start, times)
+        self.default_menu.append(splice)
+        self._dump()
+            
     @line_magic
     @magic_arguments()
-    @argument('path', help='%snip_rm menu [sub menu] [sub sub menu] [etc]', nargs='+' )    
+    @argument('path', help='path glob of the menu', nargs='+' )    
     def snip_rm(self, line):
-        """ remove the menu with the given path """
+        """ remove the menu that match the given glob """
         args = parse_argstring(self.snip_rm, line)
         menus = [dequote(menu) for menu in args.path]
+        if len(menus) == 1: menus = menus[0]
         try:
-            dpath.util.delete(self._menu, menus)
+            rows = dpath.util.delete(self._menu, menus)
+            print("deleted ", rows)
         except dpath.exceptions.PathNotFound as e:
             print("Path not found \n%s" % e)
             return
         self._dump()
         #self._dump_json()
-        
+             
     @line_magic
     @magic_arguments()
-    @argument('src_path', help='source path', nargs='+' )    
-    @argument('dst_path', help='destination path', nargs='+' )    
+    @argument('src', help='source menu path', nargs='+' )    
+    @argument('dst', help='destination menu path', nargs='+' )    
     def snip_mv(self, line):
         """ 
         %snip_mv src_path dest_path
         rename/move a menu with the given path to a new path """
         args = parse_argstring(self.snip_mv, line)
-        src_path = [dequote(menu) for menu in args.src_path]
-        dst_path = [dequote(menu) for menu in args.dst_path]
+        src_path = [dequote(menu) for menu in args.src]
+        dst_path = [dequote(menu) for menu in args.dst]
         if len(src_path) == 1: src_path = src_path[0] 
         if len(dst_path) == 1: dst_path = dst_path[0] 
         
@@ -213,6 +237,78 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
             return
         self._dump()
         #self._dump_json()
+    @line_magic
+    @magic_arguments()
+    @argument('path', help='path glob of the menu', nargs='?' )
+    def snip_get(self, line):
+        ''' return the value for the menu matching the given glob '''
+        args = parse_argstring(self.snip_get, line) 
+        menus = [dequote(menu) for menu in args.path]
+        if len(menus) == 1: menus = menus[0]
+        return dpath.util.get(self._menu, menus)
+    @line_magic
+    @magic_arguments()
+    @argument('path', help='path glob of the menu', nargs='+')    
+    @argument('-f','--filter', help='filter the result containing this string', nargs='?')
+    def snip_subset(self, line):
+        """ 
+            returns a menu subset with the given path glob and string filter
+        """
+        args = parse_argstring(self.snip_subset, line)
+        menus = [dequote(menu) for menu in args.path]
+        if len(menus) == 1: menus = menus[0]
+        if args.filter:
+            results = dpath.util.search(self._menu, menus, afilter=lambda x: args.filter in str(x) ) 
+        else:
+            results = dpath.util.search(self._menu, menus) 
+        return results
+    
+    def _is_leaf_node(self, dict_):
+        for k in dict_.keys():
+            if k in self.reserved: return False
+        return True
+    
+    @line_magic
+    @magic_arguments()
+    @argument('path', help='%snip_search "a/b/[cd]"', nargs='+')    
+    @argument('-f','--filter', help='filter the result containing this string', nargs='?')
+    def snip_search(self, line):
+        """ 
+            search the menu content with the given path glob and string filter.
+            returns a generator with the results and print out
+        """
+        args = parse_argstring(self.snip_search, line)
+        menus = [dequote(menu) for menu in args.path]
+        if len(menus) == 1: menus = menus[0]
+        if args.filter:
+            print("Filter: %s" %args.filter)
+            results = dpath.util.search(self._menu, menus, yielded=True, afilter=lambda x: args.filter in str(x) )
+            self._format_filter_results(results)
+        else:
+            results = dpath.util.search(self._menu, menus, yielded=True)
+            self._format_results(results)
+        return results        
+    
+        def _format_filter_results(self, results):
+            result_keys = []
+            for p, r in results: # get the entire snippet not just the pertaining line
+                result_keys.append(('/').join(p.rsplit('/')[:-1]))
+            for r in result_keys:
+                print("\n-> %s " % r)
+                print(('\n').join(dpath.util.get(self._menu, r)))
+
+        def _format_results(self, results):
+            for p, r in results:
+                if isinstance(r, dict):
+                    if not self._is_leaf_node(r):
+                        print("/%s"%p)
+                    self._format_results(r.items())
+                elif isinstance(r, str):
+                    print('\n'+'-'*20); print(r)
+                else: # is a list
+                    print('\n'+'-'*20)
+                    print(('\n').join(r))
+                    print('='*20)
 
 #get_ipython().register_magics(SnippetsMenuMagic)
 def load_ipython_extension(ipython):

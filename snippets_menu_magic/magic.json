@@ -1,0 +1,73 @@
+{
+    "magic": {
+        "add": {
+            "a snippet": {
+                "snippet": [
+                    "%%snip_add magic/dummy_path",
+                    "### snippet here"
+                ]
+            },
+            "--external-link": {
+                "snippet": [
+                    "%%snip_add magic dummy --external-link",
+                    "https://ipython.readthedocs.io/en/stable/",
+                    "# note don't call the menu with the reserved words ",
+                    "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
+                ]
+            },
+            "--internal-link": {
+                "snippet": [
+                    "%%snip_add magic dummy --internal-link",
+                    "#internal-link"
+                ]
+            }
+        },
+        "load": {
+            "snippet": [
+                "%snip_load "
+            ],
+            "file": {
+                "snippet": [
+                    "%snip_load test3.json"
+                ]
+            },
+            "file append": {
+                "snippet": [
+                    "%snip_load -a test3.json"
+                ]
+            }
+        },
+        "dump": {
+            "snippet": [
+                "%snip_dump #test3.json"
+            ]
+        },
+        "show": {
+            "snippet": [
+                "%snip_show"
+            ]
+        },
+        "clear": {
+            "snippet": [
+                "%snip_clear"
+            ]
+        },
+        "rm": {
+            "snippet": [
+                "%snip_rm magic dummy"
+            ]
+        },
+        "mv": {
+            "snippet": [
+                "%snip_mv magic dummy magic/dummy_path"
+            ]
+        },
+        "default": {
+            "remove": {
+                "snippet": [
+                    "%snip_slice_default 0 10"
+                ]
+            }
+        }
+    }
+}
