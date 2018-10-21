@@ -5,11 +5,6 @@ In order to use this extention it needs to be loaded with
 
     %load_ext snippets_menu_magic
 
-
-```python
-%reload_ext snippets_menu_magic
-```
-
 Any time you want to see the help for a function use the `?` :
 
     %%snip_add?

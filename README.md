@@ -5,7 +5,7 @@
 Introduction
 ===================
 
-SnippetsMenuMagic is an IPython extension that let's you easly create menu directly from the notebook.
+SnippetsMenuMagic is an IPython extension that let's you easily create menu directly from the notebook.
 
 The menu elements can be snippets of code, internal/external links, markdown documents etc.
 
