@@ -62,7 +62,7 @@ class SnippetsMenuMagic(Magics):
                 print("Can't find", path)
                 return None
         else:
-            dump = self._menu
+            dump = self._menu.copy()
         return dump
 
     def _format_filter_results(self, results):
@@ -98,7 +98,7 @@ class SnippetsMenuMagic(Magics):
                 path = path[0]
             return path
 
-    def _dump(self, path=None, topmenu=False):
+    def _dump(self, path=None):
         pre = '''
 requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
     console.log('Loading `snippets_menu` customizations from `custom.js`');
@@ -114,22 +114,23 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         fpath = os.path.join(self._dump_path, 'custom.js')
         dump = self._get_path(path)
         if not dump:
-            print('@@@')
             return
-#         if isinstance(dump, dict): dump = [dump]
-#         print("Writing ", fpath)
+        if 'top' in dump:
+            top = dump['top']
+            del dump['top']
+            _have_top = True
+        else: _have_top = False
+        #         print("Writing ", fpath)
         with open(fpath, 'w') as file:
             file.write(pre)
+            if _have_top:  # insert as a top menu
+                for m in self.dict2list(top):
+                    file.write("    snippets_menu.options['menus'].push(%s);\n" % m)
             for m in self.dict2list(dump):
-                if not topmenu:  # insert as a top menu
-                    file.write(
-                        "    snippets_menu.options['menus'][0]['sub-menu'].push(%s);\n" % m)
-                else:  # insert as a normal submenu of Snippets
-                    file.write(
-                        "    snippets_menu.options['menus'].push(%s);\n" % m)
+                # insert as a normal submenu of Snippets
+                file.write("    snippets_menu.options['menus'][0]['sub-menu'].push(%s);\n" % m)
             file.write(post)
 
-        # self.snip_show_custom()
     def _dump_json(self, path=None, fname='menu.json', debug=False):
         fpath = os.path.join(self._dump_path, fname)
         dump = self._get_path(path)
@@ -176,12 +177,11 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
     @magic_arguments()
     @argument('-f', '--file', help='file.json to dump the menu to', default='menu.json',  nargs='?')
     @argument('path', help='path glob of the source menu', nargs='?')
-    @argument('-t', '--top', help='place the menu on top instead of a submenu of Snippets', default=False, action='store_true')
     def snip_dump(self, line):
         ''' Dump the menu to custom.js and to menu.json (if file is not provided) '''
         args = parse_argstring(self.snip_dump, line)
         path = self._format_path(args.path) if args.path else None
-        self._dump(path=path, topmenu=args.top)
+        self._dump(path=path)
         if args.file:
             fname = args.file[0] if isinstance(args.file, list) else args.file
             self._dump_json(path=path, fname=fname)

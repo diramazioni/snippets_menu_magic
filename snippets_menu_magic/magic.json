@@ -1,73 +1,103 @@
 {
-    "magic": {
-        "add": {
-            "a snippet": {
-                "snippet": [
-                    "%%snip_add magic/dummy_path",
-                    "### snippet here"
-                ]
-            },
-            "--external-link": {
-                "snippet": [
-                    "%%snip_add magic dummy --external-link",
-                    "https://ipython.readthedocs.io/en/stable/",
-                    "# note don't call the menu with the reserved words ",
-                    "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
-                ]
-            },
-            "--internal-link": {
-                "snippet": [
-                    "%%snip_add magic dummy --internal-link",
-                    "#internal-link"
-                ]
-            }
-        },
-        "load": {
+    "show": {
+        "snippet": [
+            "%snip_show"
+        ]
+    },
+    "add": {
+        "a snippet": {
             "snippet": [
-                "%snip_load "
+                "%%snip_add path",
+                "### snippet here"
+            ]
+        },
+        "link": {
+            "snippet": [
+                "%%snip_add top bookmarks ipython -link",
+                "https://ipython.readthedocs.io/en/stable/",
+                "# note don't call the menu with the reserved words ",
+                "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
+            ]
+        },
+        "internal_link": {
+            "snippet": [
+                "%%snip_add top bookmarks -ilink",
+                "#internal-link"
+            ]
+        }
+    },
+    "dump": {
+        "snippet": [
+            "%snip_dump #test3.json"
+        ],
+        "file": {
+            "snippet": [
+                "%snip_dump -f test1.json"
             ],
-            "file": {
+            "path": {
                 "snippet": [
-                    "%snip_load test3.json"
-                ]
-            },
-            "file append": {
-                "snippet": [
-                    "%snip_load -a test3.json"
+                    "%snip_dump -f test1.json testone"
                 ]
             }
         },
-        "dump": {
+        "Top menu": {
             "snippet": [
-                "%snip_dump #test3.json"
+                "%snip_dump -top top"
+            ]
+        }
+    },
+    "load": {
+        "snippet": [
+            "%snip_load "
+        ],
+        "file": {
+            "snippet": [
+                "%snip_load -f bookmarks.json top/fav"
             ]
         },
-        "show": {
+        "file append": {
             "snippet": [
-                "%snip_show"
+                "%snip_load -a -f test3.json"
+            ]
+        }
+    },
+    "rm": {
+        "snippet": [
+            "%snip_rm path"
+        ]
+    },
+    "mv": {
+        "snippet": [
+            "%snip_mv top/fav top/bookmarks"
+        ]
+    },
+    "search": {
+        "snippet": [
+            "s=%snip_search \"**/bar*\""
+        ],
+        "string": {
+            "snippet": [
+                "s=%snip_search \"**\" -f string"
             ]
         },
-        "clear": {
+        "subset": {
             "snippet": [
-                "%snip_clear"
+                "sub=%snip_subset \"**\" -f etc",
+                "with open(\"/tmp/sub.json\", 'w') as f:",
+                "    json.dump(sub, f)"
             ]
-        },
-        "rm": {
+        }
+    },
+    "clear": {
+        "snippet": [
+            "%snip_clear"
+        ]
+    },
+    "default": {
+        "remove": {
             "snippet": [
-                "%snip_rm magic dummy"
+                "%snip_slice_default 0 10"
             ]
-        },
-        "mv": {
-            "snippet": [
-                "%snip_mv magic dummy magic/dummy_path"
-            ]
-        },
-        "default": {
-            "remove": {
-                "snippet": [
-                    "%snip_slice_default 0 10"
-                ]
-            }
         }
     }
 }

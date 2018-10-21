@@ -1,0 +1,1 @@
+get_ipython().register_magics(SnippetsMenuMagic)
