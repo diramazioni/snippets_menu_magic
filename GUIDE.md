@@ -31,8 +31,6 @@ sub-leaf
 
 show the stored json menu niceley formatted
 
-    %snip_show
-
 
 ```python
 %snip_show
@@ -41,30 +39,12 @@ show the stored json menu niceley formatted
     {
         "testone": {
             "bar": {
-                "snippet": [
-                    "leaf",
-                    "etc"
-                ]
-            },
-            "bar2": {
-                "snippet": [
-                    "leaf and flower",
-                    "etc foo"
-                ]
-            },
-            "bar 3": {
-                "snippet": [
-                    "etcetc"
-                ]
-            }
-        },
-        "top": {
-            "bookmarks": {
-                "snippets_menu_magic": {
-                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
-                },
-                "nbextensions": {
-                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
+                "sub": {
+                    "sub2": {
+                        "snippet": [
+                            "sub-leaf"
+                        ]
+                    }
                 }
             }
         }
@@ -133,7 +113,7 @@ The menu.json (the default menu) or the user specified json is written only with
 
 A source path to export can be provided exporting only the child of that node
 
-dump the default menu
+### Dump the default menu
 
 
 ```python
@@ -158,49 +138,8 @@ Let's save the bookmarks in a separate file
 
 ```python
 %snip_load -f bookmarks.json top/fav
-%snip_show
+#%snip_show
 ```
-
-    {
-        "testone": {
-            "bar": {
-                "snippet": [
-                    "leaf",
-                    "etc"
-                ]
-            },
-            "bar2": {
-                "snippet": [
-                    "leaf and flower",
-                    "etc foo"
-                ]
-            },
-            "bar 3": {
-                "snippet": [
-                    "etcetc"
-                ]
-            }
-        },
-        "top": {
-            "bookmarks": {
-                "snippets_menu_magic": {
-                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
-                },
-                "nbextensions": {
-                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
-                }
-            },
-            "fav": {
-                "snippets_menu_magic": {
-                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
-                },
-                "nbextensions": {
-                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
-                }
-            }
-        }
-    }
-
 
 # Remove
 
@@ -214,41 +153,8 @@ Let's save the bookmarks in a separate file
 
 
 ```python
-%snip_show
+#%snip_show
 ```
-
-    {
-        "testone": {
-            "bar": {
-                "snippet": [
-                    "leaf",
-                    "etc"
-                ]
-            },
-            "bar2": {
-                "snippet": [
-                    "leaf and flower",
-                    "etc foo"
-                ]
-            },
-            "bar 3": {
-                "snippet": [
-                    "etcetc"
-                ]
-            }
-        },
-        "top": {
-            "fav": {
-                "snippets_menu_magic": {
-                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
-                },
-                "nbextensions": {
-                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
-                }
-            }
-        }
-    }
-
 
 # Move / rename
 
