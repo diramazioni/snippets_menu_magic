@@ -23,7 +23,10 @@ session with :
 
     %load_ext snippets_menu_magic
 
+This extension rely on [dpath](https://github.com/akesterson/dpath-python) to traverse the dictionary with xpath syntax. (it should be pulled automatically by pip)
+
 It helps to also enable [Snippet Menu](https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tree/master/src/jupyter_contrib_nbextensions/nbextensions/snippets_menu) extension to later see the results
+
 
 Quick usage how-to
 =============
@@ -67,6 +70,4 @@ This software is licensed under the
 
 [Apache 2.0
 License](https://www.apache.org/licenses/LICENSE-2.0). 
-
-
 

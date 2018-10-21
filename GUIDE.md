@@ -27,7 +27,7 @@ If a value is alread present it will be replaced with the new one
 sub-leaf
 ```
 
-# Show current menu tree
+# Show
 
 show the stored json menu niceley formatted
 
@@ -41,12 +41,30 @@ show the stored json menu niceley formatted
     {
         "testone": {
             "bar": {
-                "sub": {
-                    "sub2": {
-                        "snippet": [
-                            "sub-leaf"
-                        ]
-                    }
+                "snippet": [
+                    "leaf",
+                    "etc"
+                ]
+            },
+            "bar2": {
+                "snippet": [
+                    "leaf and flower",
+                    "etc foo"
+                ]
+            },
+            "bar 3": {
+                "snippet": [
+                    "etcetc"
+                ]
+            }
+        },
+        "top": {
+            "bookmarks": {
+                "snippets_menu_magic": {
+                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
+                },
+                "nbextensions": {
+                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
                 }
             }
         }
@@ -90,18 +108,19 @@ this will error
 ## All the menu under **top** will appear as a top menu. 
 
 
-## Add external link
-    %%snip_add top bookmarks ipython -link
-    
+## Add external link   
 
 
 ```python
-%%snip_add top bookmarks ipython -link
-https://ipython.readthedocs.io/en/stable/
+%%snip_add top bookmarks snippets_menu_magic -link
+https://github.com/diramazioni/snippets_menu_magic
 ```
 
-    inserting top menu
 
+```python
+%%snip_add top bookmarks nbextensions -link
+https://github.com/ipython-contrib/jupyter_contrib_nbextensions
+```
 
 ## internal-link
     %%snip_add bookmarks -ilink
@@ -121,7 +140,6 @@ dump the default menu
 %snip_dump
 ```
 
-    inserting top menu
     writting  menu.json
 
 
@@ -163,64 +181,21 @@ Let's save the bookmarks in a separate file
                 ]
             }
         },
-        "magic": {
-            "show": {
-                "snippet": [
-                    "%snip_show"
-                ]
-            },
-            "add": {
-                "a snippet": {
-                    "snippet": [
-                        "%%snip_add path",
-                        "### snippet here"
-                    ]
-                },
-                "link": {
-                    "snippet": [
-                        "%%snip_add top bookmarks ipython -link",
-                        "https://ipython.readthedocs.io/en/stable/",
-                        "# note don't call the menu with the reserved words ",
-                        "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
-                    ]
-                },
-                "internal_link": {
-                    "snippet": [
-                        "%%snip_add top bookmarks -ilink",
-                        "#internal-link"
-                    ]
-                }
-            },
-            "dump": {
-                "snippet": [
-                    "%snip_dump #test3.json"
-                ],
-                "file": {
-                    "snippet": [
-                        "%snip_dump -f test1.json"
-                    ],
-                    "path": {
-                        "snippet": [
-                            "%snip_dump -f test1.json testone"
-                        ]
-                    }
-                },
-                "Top menu": {
-                    "snippet": [
-                        "%snip_dump top/menu"
-                    ]
-                }
-            }
-        },
         "top": {
             "bookmarks": {
-                "ipython": {
-                    "external-link": "https://ipython.readthedocs.io/en/stable/"
+                "snippets_menu_magic": {
+                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
+                },
+                "nbextensions": {
+                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
                 }
             },
             "fav": {
-                "ipython": {
-                    "external-link": "https://ipython.readthedocs.io/en/stable/"
+                "snippets_menu_magic": {
+                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
+                },
+                "nbextensions": {
+                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
                 }
             }
         }
@@ -235,7 +210,6 @@ Let's save the bookmarks in a separate file
 ```
 
     deleted  1
-    inserting top menu
 
 
 
@@ -263,74 +237,13 @@ Let's save the bookmarks in a separate file
                 ]
             }
         },
-        "magic": {
-            "show": {
-                "snippet": [
-                    "%snip_show"
-                ]
-            },
-            "add": {
-                "a snippet": {
-                    "snippet": [
-                        "%%snip_add path",
-                        "### snippet here"
-                    ]
-                },
-                "link": {
-                    "snippet": [
-                        "%%snip_add top bookmarks ipython -link",
-                        "https://ipython.readthedocs.io/en/stable/",
-                        "# note don't call the menu with the reserved words ",
-                        "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
-                    ]
-                },
-                "internal_link": {
-                    "snippet": [
-                        "%%snip_add top bookmarks -ilink",
-                        "#internal-link"
-                    ]
-                }
-            },
-            "dump": {
-                "snippet": [
-                    "%snip_dump #test3.json"
-                ],
-                "file": {
-                    "snippet": [
-                        "%snip_dump -f test1.json"
-                    ],
-                    "path": {
-                        "snippet": [
-                            "%snip_dump -f test1.json testone"
-                        ]
-                    }
-                },
-                "Top menu": {
-                    "snippet": [
-                        "%snip_dump top/menu"
-                    ]
-                }
-            },
-            "load": {
-                "snippet": [
-                    "%snip_load "
-                ],
-                "file": {
-                    "snippet": [
-                        "%snip_load -f bookmarks.json top/fav"
-                    ]
-                },
-                "file append": {
-                    "snippet": [
-                        "%snip_load -a -f test3.json"
-                    ]
-                }
-            }
-        },
         "top": {
             "fav": {
-                "ipython": {
-                    "external-link": "https://ipython.readthedocs.io/en/stable/"
+                "snippets_menu_magic": {
+                    "external-link": "https://github.com/diramazioni/snippets_menu_magic"
+                },
+                "nbextensions": {
+                    "external-link": "https://github.com/ipython-contrib/jupyter_contrib_nbextensions"
                 }
             }
         }
@@ -343,9 +256,6 @@ Let's save the bookmarks in a separate file
 ```python
 %snip_mv top/fav top/bookmarks
 ```
-
-    inserting top menu
-
 
 # Search
 
@@ -486,16 +396,10 @@ clear the current menu from the memory
 %snip_slice_default 3 1
 ```
 
-    inserting top menu
-
-
 
 ```python
 %snip_slice_default 4 3 
 ```
-
-    inserting top menu
-
 
 # Develop it further
 
@@ -536,143 +440,3 @@ First clone this repo localy and, in the working dir, have it installed with
 #%%load snippets_menu_magic/nb_register.py
 #get_ipython().register_magics(SnippetsMenuMagic)
 ```
-
-
-```python
-%snip_show
-```
-
-    {
-        "testone": {
-            "bar": {
-                "snippet": [
-                    "leaf",
-                    "etc"
-                ]
-            },
-            "bar2": {
-                "snippet": [
-                    "leaf and flower",
-                    "etc foo"
-                ]
-            },
-            "bar 3": {
-                "snippet": [
-                    "etcetc"
-                ]
-            }
-        },
-        "top": {
-            "bookmarks": {
-                "ipython": {
-                    "external-link": "https://ipython.readthedocs.io/en/stable/"
-                }
-            },
-            "magic": {
-                "show": {
-                    "snippet": [
-                        "%snip_show"
-                    ]
-                },
-                "add": {
-                    "a snippet": {
-                        "snippet": [
-                            "%%snip_add path",
-                            "### snippet here"
-                        ]
-                    },
-                    "link": {
-                        "snippet": [
-                            "%%snip_add top bookmarks ipython -link",
-                            "https://ipython.readthedocs.io/en/stable/",
-                            "# note don't call the menu with the reserved words ",
-                            "# ['snippet', 'internal-link', 'external-link', 'menu-direction', 'sub-menu-direction']"
-                        ]
-                    },
-                    "internal_link": {
-                        "snippet": [
-                            "%%snip_add top bookmarks -ilink",
-                            "#internal-link"
-                        ]
-                    }
-                },
-                "dump": {
-                    "snippet": [
-                        "%snip_dump #test3.json"
-                    ],
-                    "file": {
-                        "snippet": [
-                            "%snip_dump -f test1.json"
-                        ],
-                        "path": {
-                            "snippet": [
-                                "%snip_dump -f test1.json testone"
-                            ]
-                        }
-                    },
-                    "Top menu": {
-                        "snippet": [
-                            "%snip_dump top/menu"
-                        ]
-                    }
-                },
-                "load": {
-                    "snippet": [
-                        "%snip_load "
-                    ],
-                    "file": {
-                        "snippet": [
-                            "%snip_load -f bookmarks.json top/fav"
-                        ]
-                    },
-                    "file append": {
-                        "snippet": [
-                            "%snip_load -a -f test3.json"
-                        ]
-                    }
-                },
-                "rm": {
-                    "snippet": [
-                        "%snip_rm path"
-                    ]
-                },
-                "mv": {
-                    "snippet": [
-                        "%snip_mv top/fav top/bookmarks"
-                    ]
-                },
-                "search": {
-                    "snippet": [
-                        "s=%snip_search \"**/bar*\""
-                    ],
-                    "string": {
-                        "snippet": [
-                            "s=%snip_search \"**\" -f string"
-                        ]
-                    },
-                    "subset": {
-                        "snippet": [
-                            "sub=%snip_subset \"**\" -f etc",
-                            "with open(\"/tmp/sub.json\", 'w') as f:",
-                            "    json.dump(sub, f)"
-                        ]
-                    }
-                },
-                "clear": {
-                    "snippet": [
-                        "%snip_clear"
-                    ]
-                },
-                "default": {
-                    "remove": {
-                        "snippet": [
-                            "%snip_slice_default 0 10"
-                        ]
-                    }
-                }
-            }
-        }
-    }
-
-
-
