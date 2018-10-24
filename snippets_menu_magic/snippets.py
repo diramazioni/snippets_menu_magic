@@ -54,6 +54,12 @@ class SnippetsMenuMagic(Magics):
             dest.append(dmenu)
         return dest
 
+    def _is_leaf_node(self, dict_):
+        for k in dict_.keys():
+            if k in self.reserved:
+                return False
+        return True
+
     def _get_path(self, path=None):
         if path:
             try:
@@ -291,9 +297,11 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         src_path = self._format_path(args.src) if args.src else None
         dst_path = self._format_path(args.dst) if args.dst else None
         try:
-            for src_ in dpath.util.values(self._menu, src_path):
+            results = dpath.util.values(self._menu, src_path)
+            for src_ in results:
                 dpath.util.new(self._menu, dst_path, src_)
-            dpath.util.delete(self._menu, src_path)
+            if len(results):
+                dpath.util.delete(self._menu, src_path)
         except dpath.exceptions.PathNotFound as e:
             print("Path not found \n%s" % e)
             return
@@ -308,6 +316,10 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         args = parse_argstring(self.snip_get, line)
         path = self._format_path(args.path) if args.path else None
         return dpath.util.get(self._menu, path)
+    @line_magic
+    def snip_get_all(self, line):
+        ''' return the value for the menu matching the given glob '''
+        return self._menu
 
     @line_magic
     @magic_arguments()
@@ -326,12 +338,6 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         else:
             results = dpath.util.search(self._menu, path)
         return results
-
-    def _is_leaf_node(self, dict_):
-        for k in dict_.keys():
-            if k in self.reserved:
-                return False
-        return True
 
     @line_magic
     @magic_arguments()

@@ -5,6 +5,25 @@ In order to use this extention it needs to be loaded with
 
     %load_ext snippets_menu_magic
 
+
+```python
+import sys
+sys.path
+```
+
+
+
+
+    ['',
+     '/home/es/dev/anaconda2/envs/meteo/lib/python36.zip',
+     '/home/es/dev/anaconda2/envs/meteo/lib/python3.6',
+     '/home/es/dev/anaconda2/envs/meteo/lib/python3.6/lib-dynload',
+     '/home/es/dev/anaconda2/envs/meteo/lib/python3.6/site-packages',
+     '/home/es/dev/anaconda2/envs/meteo/lib/python3.6/site-packages/IPython/extensions',
+     '/home/es/.ipython']
+
+
+
 Any time you want to see the help for a function use the `?` :
 
     %%snip_add?
@@ -235,21 +254,22 @@ s=%snip_search "**" -f etc
 
 
 ## Hacking
-since the internal (dpath) menu dictionary is exposed in the user space as `__menu` you can operate directly with dpath and build your custom filter. 
+since you get the hold of the internal (dpath) menu dictionary with `%snip_get_all` or `%snip_get path/to/menu` you can operate directly with dpath and build your custom filter or operate on the search results. 
 
 The previous query `s = %snip_search "**" -f etc` is equivalent to
-    
-    s = dpath.util.search(__menu, '**', afilter=lambda x: 'etc' in str(x))
+
+    all = %snip_get_all
+    search = dpath.util.search(all, '**', afilter=lambda x: 'etc' in str(x))
 in both cases returns an iteratable that can be used to treat the result:
 
 Unfortunatly, as far as I know, with ipython's magics that use argparse, you can't pass a variable value so you **can't** do expression like:
 
-    for k,v in s:
-        %snip_rm k
-but is possible to directly use dpath
+    for path,v in search:
+        %snip_rm path
+but is possible to directly use dpath while iterating on the search results
 
-    for k,v in s:
-        dpath.util.delete(__menu, k)
+    for path,v in search:
+        dpath.util.delete(all, path)
 
 ## Subset
 
