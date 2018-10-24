@@ -297,11 +297,11 @@ requirejs(["nbextensions/snippets_menu/main"], function (snippets_menu) {
         src_path = self._format_path(args.src) if args.src else None
         dst_path = self._format_path(args.dst) if args.dst else None
         try:
-            results = dpath.util.values(self._menu, src_path)
-            for src_ in results:
-                dpath.util.new(self._menu, dst_path, src_)
-            if len(results):
-                dpath.util.delete(self._menu, src_path)
+            results = list(dpath.util.search(self._menu, src_path, yielded=True))
+            for path, src_ in results:
+                new_dst = dst_path + '/' + path.rsplit('/')[-1:][0]
+                dpath.util.new(self._menu, new_dst, src_)
+                dpath.util.delete(self._menu, path)
         except dpath.exceptions.PathNotFound as e:
             print("Path not found \n%s" % e)
             return
